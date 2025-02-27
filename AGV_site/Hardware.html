@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGV</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+    <header class="bg-gray-800 text-white p-4">
+        <nav class="flex justify-between items-center">
+            <div class="text-lg font-semibold">
+                <a href="AGV.html">AGV</a>
+            </div>
+            <ul class="flex space-x-4">
+                <li><a href="Introdução.html" class="hover:text-gray-400">Introdução</a></li>
+                <li><a href="Arquitetura.html" class="hover:text-gray-400">Arquitetura</a></li>
+                <li><a href="Hardware.html" class="hover:text-gray-400">Hardware</a></li>
+                <li><a href="Software.html" class="hover:text-gray-400">Software</a></li>
+                <li><a href="Resultados.html" class="hover:text-gray-400">Resultados</a></li>
+                <li><a href="Conclusões.html" class="hover:text-gray-400">Conclusões</a></li>
+                <li><a href="Referências.html" class="hover:text-gray-400">Referências</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main class="p-16">
+        <section>
+            <h1 class="text-3xl font-bold mb-4 text-gray-800">Hardware</h1>
+            <p class="mb-4">
+                O desenvolvimento do Veículo Guiado Automático (AGV) baseou-se na integração de diversos componentes eletrônicos que trabalham em conjunto para assegurar o funcionamento autônomo do sistema. No Hardware, são detalhados os principais elementos utilizados, incluindo sensores, motores, controlador e componentes auxiliares, bem como os seus papéis na arquitetura geral do projeto.
+            </p>
+            <h1 class="text-xl font-bold mb-4 text-gray-800">Microcontrolador ATmega328P</h1>
+            <p class="mb-4">
+                O microcontrolador ATmega328P é o núcleo do sistema, sendo responsável por processar os dados provenientes dos sensores e gerar os sinais de controle para os motores. Este componente foi escolhido pela sua versatilidade, baixo consumo energético e ampla compatibilidade com periféricos. Além disso, ele suporta a comunicação I2C e PWM, essenciais para o funcionamento do AGV.
+            </p>
+            <div class="flex justify-center items-center">
+                <img src="images/ATmega328P.png" alt="ATmega328P" class="w-56 h-56">
+            </div>
+            <h1 class="text-xl font-bold mb-4 text-gray-800">Programador USBasp</h1>
+            <p class="mb-4">
+                O USBasp é um programador AVR baseado em USB que permite gravar o firmware diretamente em microcontroladores AVR, como o ATmega328P, sem a necessidade de um bootloader. Este dispositivo é uma ferramenta essencial para o desenvolvimento e depuração de projetos baseados em microcontroladores AVR. 
+            </p>
+            <div class="flex justify-center items-center">
+                <img src="images/usbasp.jpg" alt="usbasp" class="w-64">
+            </div>
+            <p class="mb-4">
+                O USBasp é compatível com uma ampla gama de microcontroladores AVR, incluindo o ATmega328P usado no projeto. Ele suporta uma comunicação direta com o microcontrolador via interface ISP (In-System Programming). O programador liga-se ao computador via USB, eliminando a necessidade de portas seriais ou paralelas, o que o torna prático e compatível com computadores modernos, permitindo velocidades de programação ajustáveis, que podem ser configuradas de acordo com o microcontrolador e as necessidades específicas da aplicação.
+                <br><br>O USBasp é compatível com softwares populares de programação, como o AVRDUDE, utilizado para gravar, ler e verificar o conteúdo da memória do microcontrolador. A instalação de drivers é necessária para que o dispositivo seja corretamente reconhecido pelo sistema operativo. 
+            </p>
+            <p class="mb-4">
+                De modo a conectar o USBasp ao ATmega328P, é necessário ligar os pinos de programação do microcontrolador (MISO, MOSI, SCK, RESET, VCC e GND) aos respetivos pinos do programador, seguindo a imagem:
+            </p>
+            <div class="flex justify-center items-center">
+                <img src="images/USBasp_conn.png" alt="usbasp_conn" class="w-96 mb-4">
+            </div>
+            <h1 class="text-xl font-bold mb-4 text-gray-800">Sensor Ótico TCRT5000</h1>
+            <p class="mb-4">
+                O sensor TCRT5000 com circuito integrado é composto por um emissor infravermelho e um fototransistor, posicionados lado a lado. O LED emite continuamente um feixe de luz infravermelha, que é projetado na superfície à frente do sensor. Superfícies claras, como fundos brancos, refletem a luz, enquanto superfícies escuras, como linhas pretas, absorvem o feixe.
+                Assim, a luz refletida é captada pelo fototransistor, que caso a luz refletida seja suficiente, o mesmo conduz, gerando um sinal que é processado pelo circuito integrado. Este, por sua vez, altera o estado da saída digital, para o nível baixo (0V) quando a detecção estiver ativa, ou nível alto (5V) na ausência de reflexão.</br></br>No contexto do AGV, foram usados três sensores de linha, um usado para detetar a linha preta da trajetória e dois para detetar o fundo branco do circuito. As informações recebidas pelos sensores são enviadas para o microcontrolador, que analisa os dados para garantir que o AGV mantenha a trajetória. 
+            </p>
+            <div class="flex justify-center items-center">
+                <img src="images/TCRT5000.png" alt="TCRT5000" class="w-64 h-48 p-4">
+            </div>
+            <h1 class="text-xl font-bold mb-4 text-gray-800">Sensor Ultrassónico HC-SR04</h1>
+            <p class="mb-4">
+                O sensor ultrassónico HC-SR04 funciona através da emissão e receção de ondas ultrassónicas para medir distâncias. O processo começa quando o microcontrolador envia um pulso de 10 microssegundos para o pino Trigger do sensor, iniciando a medição. Após receber este pulso, o sensor emite 8 pulsos de ondas ultrassónicas pelo pino Echo. Essas ondas propagam-se no ar até encontrarem um obstáculo, refletindo para o sensor, onde são captadas pelo recetor como é possível perceber na figura abaixo.
+            </p>
+            <div class="flex justify-center items-center">
+                <img src="images/HC-SR04.jpg" alt="HC-SR04" class=" w-64 h-64">
+            </div>
+            <div class="flex justify-center items-center">
+                <img src="images/HC-SR04_signal.jpg" alt="HC-SR04_signal" class="mb-8">
+            </div>
+            <p class="mb-4">
+                Quando as ondas são detetadas de volta, o sensor gera um pulso no pino Echo, cuja duração é proporcional ao tempo que as ondas demoram a ir e voltar. Através dessa duração é possível calcular a distância, utilizando a fórmula baseada na velocidade do som:
+            </p>
+            <div class="flex justify-center items-center">
+                <img src="images/formula_som.png" alt="HC-SR04_formula" class="m-4">
+            </div>
+            <p class="mb-4">
+                O AGV foi equipado com um sensor ultrassónico frontal que será usado para detetar obstáculos no percurso do AGV e ajudar na decisão de movimento. A funcionalidade principal é medir a distância entre o AGV e um objeto ou obstáculo à sua frente, fornecendo informações cruciais para evitar colisões.
+            </p>
+            <h1 class="text-xl font-bold mb-4 text-gray-800">Driver Motor L298N</h1>
+            <p>
+                O driver L298N é um módulo utilizado para controlar motores DC. Este é baseado no chip L298, que possui duas pontes H independentes, permitindo o controle de dois motores simultaneamente, com capacidade para alterar a direção de rotação e regular a velocidade dos motores, sendo a sua principal função fornecer uma interface entre os sinais de controlo de baixo nível lógico do microcontrolador e os motores. 
+            </p>
+            <div class="flex justify-center items-center">
+                <img src="images/L298N.png" alt="L298N" class="w-96">
+            </div>
+            <p class="mb-4">
+                O L298N requer alimentação tanto para os motores quanto para sua lógica interna. O pino VCC alimenta os motores com tensões entre 6V e 35V, enquanto a alimentação lógica pode ser fornecida através de um regulador de tensão. O pino GND é a referência comum para a alimentação e o microcontrolador, logo deve ser ligado no mesmo ponto do GND do microcontrolador, de modo a compartilharem uma referência comum de potencial elétrico.
+            </p>
+            <p class="mb-4">
+                O controlo do driver ocorre combinando sinais de direção (IN1/IN2 ou IN3/IN4) com sinais PWM aplicados nos pinos ENA e ENB, permitindo controlar a direção e a velocidade dos motores. O controlo da direção segue a seguinte lógica:
+            </p>
+            <div class="flex justify-center items-center">
+                <img src="images/L298N_direcao.png" alt="L298N_direcao">
+            </div>
+            <p class="mb-4 mt-4">
+                As saídas OUT1 e OUT2 conectam-se ao motor A, enquanto OUT3 e OUT4 conectam-se ao motor B. Com isso, cada ponte H pode controlar um motor de forma independente. Para além disso, o módulo conta com um dissipador de calor, que evita superaquecimentos, ajudando a proteger o circuito e garantir maior durabilidade.
+            </p>
+            <p class="mb-4">
+                Neste projeto, os pinos de entrada do driver, IN1, IN2, IN3, e IN4, foram conectados ao microcontrolador ATmega328P para definir a direção de rotação de cada motor. Os sinais PWM foram aplicados aos pinos ENA e ENB para ajustar a velocidade dos motores, permitindo o controlo preciso do movimento do AGV.
+            </p>
+            <h1 class="text-xl font-bold mb-4 text-gray-800">Motor TT </h1>
+            <p>
+                Os motores TT (Toy Type) são motores de corrente contínua (DC) amplamente utilizados em projetos de robótica educacional e hobby devido à sua simplicidade, eficiência e baixo custo. Estes motores operam numa faixa de tensão entre 3V e 12V, com uma tensão nominal comum de 6V, o que os torna compatíveis com o driver de motores L298N utilizado no sistema. Os mesmos possuem uma boa relação entre velocidade e torque, proporcionando um equilíbrio ideal para aplicações como seguimento de linha, onde é necessário combinar movimento ágil com controlo preciso.
+            </p>
+            <div class="flex justify-center items-center">
+                <img src="images/motor_tt.png" alt="motor_tt" class="w-96">
+            </div>
+            <p class="mb-4">
+                No contexto do AGV, os motores TT oferecem várias vantagens. O controlo combinado com o driver L298N permite a implementação de um sistema diferencial, essencial para realizar manobras precisas e mudanças de direção suaves. Além disso, a robustez e simplicidade desses motores asseguram durabilidade e baixa necessidade de manutenção, características importantes para veículos autónomos que operam em ambientes controlados.
+            </p>
+            <h1 class="text-xl font-bold mb-4 text-gray-800">Encoder HC-020k</h1>
+            <p>
+                Os encoders HC-020K, são um tipo de encoder rotativo incremental que desempenha um papel crucial no controlo preciso da locomoção do AGV. Estes dispositivos medem a velocidade de rotação das rodas, permitindo calcular em tempo real tanto a distância percorrida quanto a velocidade de cada roda. <br><br>O HC-020K funciona com base na interrupção de um feixe de luz infravermelha por meio de uma roda dentada ou disco perfurado. Cada interrupção gera um pulso digital, cuja frequência é lida pelo microcontrolador ATmega328P. A resolução do encoder depende do número de divisões presentes no disco, o que determina a precisão das medições e permite um controlo mais detalhado do movimento do veículo.
+            </p>
+            <div class="flex justify-center items-center">
+                <img src="images/HC-020K.png" alt="encoder" class="w-80">
+            </div>
+            <p class="mb-4">
+                A interface do HC-020K é simples, consistindo em saídas digitais que se conectam diretamente a pinos de entrada do microcontrolador, facilitando a integração no sistema.
+            </p>
+            <p class="mb-4">
+                Ao usar um encoder em cada roda do AGV, estes oferecem feedback constante sobre o movimento e velocidade do veículo, auxiliando na deteção de possíveis erros ou inconsistências no desempenho. Com isso, o HC-020K torna-se uma ferramenta indispensável para a implementação de um sistema de navegação eficiente e confiável.
+            </p>
+            <h1 class="text-xl font-bold mb-4 text-gray-800">Display LCD 16x2 I2C</h1>
+            <p>
+                O display LCD 16x2 com interface I2C é utilizado para simplificar a comunicação com o microcontrolador, reduzindo a quantidade de pinos necessários para o seu funcionamento. O módulo possui quatro pinos principais: VCC para alimentação, GND, SDA para a linha de dados do barramento I2C e SCL para a linha de clock. Durante a operação, o microcontrolador inicializa o barramento I2C e configura o display para o modo desejado. Em seguida, os comandos e dados são enviados para atualizar os caracteres exibidos, com possibilidade de controlar a posição do cursor e criação de símbolos personalizados.
+            </p>
+            <div class="flex justify-center items-center">
+                <img src="images/display16x2.jpg" alt="display" class="w-80">
+            </div>
+            <p class="mb-4">
+                No projeto do AGV, o display LCD 16x2 foi utilizado para apresentar informações em tempo real, como a velocidade dos motores obtida através dos encoders referidos em cima. A interface I2C permitiu que a comunicação fosse eficiente e de fácil implementação, otimizando os recursos do microcontrolador ATmega328P.
+            </p>
+            <h1 class="text-xl font-bold mb-4 text-gray-800">LED Vermelho</h1>
+            <p class="mb-4">
+                O LED vermelho desempenha um papel essencial no projeto, servindo como um indicador visual do estado do sistema. Este componente é uma parte obrigatória do sistema mínimo, sendo utilizado para sinalizar que o microcontrolador está a funcionar corretamente, através do piscar a uma frequência de 1 Hz. 
+            </p>
+            <p class="mb-4">
+                Em relação a cor e tipo, o LED usado é de cor vermelha, com uma tensão de funcionamento típica de cerca de 2V a 2,2V e uma corrente nominal de 10mA a 20mA. Para evitar que o LED receba mais corrente do que o recomendado, o circuito inclui uma resistência de 330Ω em série com o LED. Este componente limita a corrente, protegendo o LED e o microcontrolador de danos. 
+            </p>
+            <div class="flex justify-center items-center">
+                <img src="images/LED.png" alt="LED" class="w-56 h-56">
+            </div>
+            <p class="mb-4">
+                O LED vermelho não só cumpre uma função prática como indicador de estado, mas também serve como um elemento de diagnóstico no desenvolvimento do sistema. A implementação eficiente do piscar a 1 Hz demonstra o uso eficaz dos recursos do ATmega328P, como o controlo GPIO e os timers, consolidando a sua importância no projeto global do AGV seguidor de linha.
+            </p>
+
+            <h1 class="text-xl font-bold mb-4 text-gray-800">Fonte de Alimentação – Pilha de 9V</h1>
+            <p class="mb-4">
+                A fonte de alimentação do projeto baseia-se numa pilha de 9V, fundamental para garantir o funcionamento estável de todos os componentes eletrónicos, especialmente o microcontrolador ATmega328P e os motores TT.
+            </p>
+            <div class="flex justify-center mb-4 items-center">
+                <img src="images/pilha9V.webp" alt="LED" class="w-40">
+            </div>
+            <p class="mb-4">
+                Escolha da Pilha de 9V - Testes preliminares. Durante o desenvolvimento, várias fontes de alimentação foram testadas, incluindo diferentes combinações de pilhas AA de 1,5V e outras fontes recarregáveis. No entanto, apenas a pilha de 9V foi capaz de fornecer energia suficiente para o driver de motor L298N, garantindo que ele pudesse regular eficientemente a tensão para os 5V necessários para alimentar o ATmega328P. 
+            </p>
+            <p class="mb-4">
+                A pilha de 9V é compacta e portátil, uma vez ser pequena e leve, o que é crucial para um veículo autónomo como o AGV, onde o espaço e o peso são limitados, fornece a tensão necessária para garantir o funcionamento eficiente de todos os componentes conectados ao L298N e é fácil de encontrar e substituir, tornando a manutenção do sistema mais prática, já que a pilha se esgota rapidamente com testes contínuos.
+            </p>
+
+
+            <h1 class="text-xl font-bold mb-4 text-gray-800">Esquema Elétrico</h1>
+            <p class="mb-4">
+                O esquema elétrico do projeto ilustra todas as conexões entre os componentes principais, incluindo o ATmega328P, o driver L298N, os sensores TCRT5000 e HC-SR04, o display LCD, os motores, os encoders e outros componentes. As conexões mostram como os sinais de controlo e energia são distribuídos, garantindo que cada componente funcione corretamente dentro do sistema integrado. Componentes, como o LED, tiveram de ter especial cuidado tendo em conta a escolha de um pino com o timer1 para o LED piscar a frequência de 1Hz e também de EnB e de EnA que necessitam de pinos com PWM para controlo dos motores. Reaproveitou-se também pinos aos quais o USBasp se encontra ligado, uma vez que o projeto final terá de funcionar sem o mesmo. O display requer dois pinos obrigatoriamente (SDA e DCL) uma vez que são fundamentais para o seu funcionamento. O cristal e os condensadores foram adicionados para o clock externo.
+            </p>
+            <div class="flex justify-center items-center">
+                <img src="images/esquema_eletrico.png" alt="esquema_eletrico" class="mb-4">
+            </div>
+            <h1 class="text-xl font-bold mb-4 text-gray-800">Layout PCB</h1>
+            <p class="mb-4">
+                O layout do PCB foi projetado para acomodar todos os componentes de forma organizada e eficiente, minimizando interferências e otimizando o fluxo de corrente elétrica. O design do PCB assegura que as pistas estejam corretamente dimensionadas para suportar as correntes necessárias, e que os componentes estejam dispostos de maneira a facilitar a montagem e manutenção do AGV.
+                De maneira a assegurar comprimentos não muito longos de pistas, optou-se pela utilização de duas camadas para que assim, de maneira eficiente, se diminuísse a distância entre dois pinos.
+            </p>
+            <div class="flex justify-center items-center">
+                <img src="images/layout_pcb.png" alt="layout_pcb" class="mb-4">
+            </div>
+            <p class="mb-4">
+                Uma das principais regras seguidas no design do PCB foi a utilização de conexões em ângulo de 45º em vez de 90º. Este padrão é importante porque conexões de 45º reduzem as reflexões de sinal e minimizam a interferência eletromagnética, melhorando a integridade do sinal no circuito. Além disso, este tipo de design facilita o fluxo de corrente elétrica e resulta num layout mais limpo e eficiente, essencial para o desempenho estável do AGV.
+                Quando duas camadas de pistas passam uma pela outra, as interseções foram feitas com ângulos de 90º. Esta prática ajuda a reduzir a interferência entre camadas e garante que a integridade do sinal seja mantida, especialmente em circuitos de alta frequência. As conexões perpendiculares entre camadas minimizam o risco de curto-circuitos e melhoram a capacidade de separação entre sinais de diferentes planos.
+                <br><br>Foi feita a escolha de projetar o PCB para permitir a soldagem direta dos fios que ligam aos pinos correspondentes dos componentes. Esta abordagem tem várias vantagens, como a robustez e durabilidade, pois a soldagem direta oferece conexões mais robustas, diminuindo a probabilidade de desconexões durante o funcionamento do AGV e a facilidade de manutenção, uma vez que ao se soldar apenas os fios, fica mais fácil a troca dos sensores em caso de avaria ou mal-funcionamento.
+                <br><br>Alguns componentes, como o ATmega328P, o cristal de 16 MHz e os condensadores, foram integrados diretamente no PCB. Esta decisão foi baseada em várias razões. Redução de interferência, ao colocar componentes críticos diretamente no PCB minimiza as interferências externas e garante uma comunicação estável e eficiente entre os componentes. Também a facilidade de montagem, a integração de componentes essenciais no PCB simplifica o processo de montagem do AGV, reduzindo a quantidade de conexões externas necessárias e, consequentemente, o risco de erros na ligação de fios. E, por fim, a eficiência espacial, a colocação de componentes diretamente no PCB otimiza o espaço disponível, permitindo um design mais compacto e organizado.
+            </p>
+            <h1 class="text-xl font-bold mb-4 text-gray-800">Placa PCB (Frente e Verso)</h1>
+            <div class="flex justify-center items-center">
+                <img src="images/placa_pcb.png" alt="placa_pcb" class="mb-4">
+            </div>
+            <p>
+                Ao seguir estas regras de design, o PCB garante não só a eficiência elétrica e funcional, mas também a fiabilidade e manutenção mais fácil do sistema, elementos cruciais para o desempenho do AGV em ambientes dinâmicos.
+                A combinação de um design de esquemático bem estruturado com um layout de PCB eficiente garante que o AGV funcione de forma fiável e mantenha um desempenho consistente durante a operação.
+            </p>
+        </section>
+    </main>

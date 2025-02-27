@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGV</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+    <header class="bg-gray-800 text-white p-4">
+        <nav class="flex justify-between items-center">
+            <div class="text-lg font-semibold">
+                <a href="AGV.html">AGV</a>
+            </div>
+            <ul class="flex space-x-4">
+                <li><a href="Introdução.html" class="hover:text-gray-400">Introdução</a></li>
+                <li><a href="Arquitetura.html" class="hover:text-gray-400">Arquitetura</a></li>
+                <li><a href="Hardware.html" class="hover:text-gray-400">Hardware</a></li>
+                <li><a href="Software.html" class="hover:text-gray-400">Software</a></li>
+                <li><a href="Resultados.html" class="hover:text-gray-400">Resultados</a></li>
+                <li><a href="Conclusões.html" class="hover:text-gray-400">Conclusões</a></li>
+                <li><a href="Referências.html" class="hover:text-gray-400">Referências</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main class="p-16">
+        <section>
+            <h1 class="text-3xl font-bold mb-4 text-gray-800">Introdução</h1>
+            <p class="mb-4">
+                O desenvolvimento de sistemas autônomos tem se tornado cada vez mais relevante em diversas áreas, como a automação industrial, logística e robótica móvel. Dentro desse contexto, foi proposto pela unidade curricular de LABSI o desafio de criar um protótipo funcional que combinasse diferentes tecnologias de sensores e controlo, integrando conceitos de eletrônica, programação e automação. De modo a cumprir os requisitos, optou-se por projetar e implementar um Veículo Guiado Automático (AGV – Automatic Guided Vehicle), capaz de operar de forma autônoma, utilizando sensores e atuadores para monitorização e tomada de decisão em tempo real.
+            </p>
+            <h1 class="text-xl font-bold mb-4 text-gray-800">Motivação e Objetivos</h1>
+            <p class="mb-4">
+                A escolha de um AGV como foco do projeto estava alinhada com a intenção de aplicar conhecimentos teóricos em uma solução prática e relevante. O objetivo principal foi desenvolver um protótipo capaz de seguir trajetórias previamente definidas, detetando alterações no percurso, como a presença de obstáculos, e adaptando o seu comportamento. Para isso, foram integrados sensores ultrassónicos ao sistema para identificar obstáculos e tomar decisões, como reduzir a velocidade ou parar o veículo, enquanto os sensores óticos garantem que o AGV segue a linha de forma precisa e detalhada, através do controlo dos motores por PWM. Além disso, foi integrado um display ao circuito para fornecer informações relevantes, como a velocidade e sentido de cada roda, durante a trajetória, e ainda um LED com a frequência de 1 Hz.
+            </p>
+            <h1 class="text-xl font-bold mb-4 text-gray-800">Estado da Arte</h1>
+            <p class="mb-4">
+                O desenvolvimento de veículos autónomos de pequeno porte, como os AGVs, tem-se tornado uma área de grande interesse, especialmente no contexto de ambientes controlados onde a eficiência e a precisão são fundamentais. Estes veículos utilizam uma combinação de sensores para navegar de forma autónoma, seguindo trajetórias pré-determinadas e evitando obstáculos inesperados. O objetivo principal é alcançar uma operação autónoma segura e eficaz, aproveitando a acessibilidade de componentes eletrónicos e microcontroladores de baixo custo. 
+                <br><br>Com a evolução dos microcontroladores, como o ATmega328P e o Raspberry Pi Pico, e o desenvolvimento de sensores mais precisos e acessíveis, tornou-se possível criar AGVs com um nível de autonomia e fiabilidade que antes estava restrito a projetos de grande escala e custo elevado. Estes avanços permitiram que projetos educacionais e de pequenas empresas beneficiassem de tecnologias de ponta a um custo reduzido.
+                Os AGVs seguidor de linha destacam-se pela sua capacidade de utilizar sensores de linha para detetar e seguir um percurso traçado, geralmente marcado por uma linha preta sobre uma superfície clara. Paralelamente, a integração de sensores de obstáculos, como os sensores ultrassónicos, permite a deteção de objetos no caminho, garantindo a segurança do percurso. A locomoção diferencial, controlada por drivers de motores, como o L298N, tem-se mostrado uma solução eficaz para o controlo de velocidade e direção.
+                <br><br>Apesar dos avanços na tecnologia, os AGVs seguidores de linha enfrentam desafios como a necessidade de precisão na leitura dos sensores de linha em superfícies irregulares ou com variações de cor. Além disso, a autonomia limitada devido ao consumo energético dos motores e sensores pode restringir a duração das operações, sendo este um fator crítico em aplicações industriais. Outro desafio comum é a calibragem dos sensores ultrassónicos em ambientes ruidosos, onde ecos e interferências podem comprometer a precisão da deteção de obstáculos.
+                Para explorar as diferentes abordagens tecnológicas nesta área, foram analisados dois modelos de veículos autónomos: o <b>Pico Robot Car</b> e o  <b>Smart Robot Car V4.0</b>. Ambos oferecem soluções distintas que podem inspirar e informar o desenvolvimento de AGVs customizados, e inclusive o Pico Robot Car, juntamente com outros, serviu de inspiração para este projeto.
+            </p>
+            <h3 class="text-xl font-bold text-gray-800"> - Pico Robot Car</h3>
+            <div class="flex justify-center items-center">
+                <img src="images/AGV_pico.jpg" alt="AGV_pico" class="w-96 h-96">
+            </div>
+            <p class="mb-4">
+                O Pico Robot Car, baseado no microcontrolador Raspberry Pi Pico, é uma solução compacta e versátil que integra sensores de linha com quatro canais IR e um sensor ultrassónico para deteção de obstáculos. Este modelo destaca-se pelo seu design integrado e pela utilização de uma bateria recarregável de 3,7V, o que facilita a manutenção e a portabilidade. A inclusão de um display OLED de 0,96" permite uma interface visual para o utilizador, aumentando as capacidades de monitorização.
+            </p>
+            <h3 class="text-xl font-bold mb-10 text-gray-800"> - Elegoo Smart Robot Car V4.0</h3>
+            <div class="flex justify-center items-center">
+                <img src="images/AGV_elegoo.webp" alt="AGV_elegoo" class="w-96 h-96">
+            </div>
+            <p class="mb-4">
+                O Elegoo Smart Robot Car V4.0 é um kit popular entre os entusiastas de Arduino, apresentando uma combinação eficaz de sensores de linha TCRT5000 e sensores ultrassónicos. O controlo dos motores é realizado através do driver L298N, e o sistema é compatível com módulos Bluetooth, permitindo a comunicação remota. Este modelo é frequentemente utilizado em projetos educacionais, devido à sua ampla documentação e facilidade de uso.
+            </p>
+            <h3 class="text-xl font-bold mb-8 text-gray-800"> - Tabela Comparativa</h3>
+            <div class="flex justify-center items-center">
+                <img src="images/AGV_tabela.png" alt="AGV_tabela" class="mb-4">
+            </div>
+            <p class="mb-4">
+                Uma análise técnica mais aprofundada revela que o Pico Robot Car, com a sua bateria recarregável e display OLED, oferece uma maior integração e portabilidade em comparação com o Elegoo Smart Robot Car, que depende de baterias convencionais e carece de um display integrado. Ambos os modelos utilizam o driver L298N para controlo de motores, embora o Pico Robot Car beneficie da conectividade Bluetooth BLE integrada, enquanto o Elegoo permite a adição de módulos Bluetooth externos.
+            </p>
+            <h3 class="text-xl font-bold mb-4 text-gray-800"> - Aplicação ao Projeto</h3>
+            <p class="mb-4">
+                O AGV seguidor de linha deste projeto é projetado com três sensores de linha TCRT5000, que garantem uma leitura precisa da trajetória, fazendo o carro seguir uma linha de cor preta. Um sensor de distância HC-SR04 é utilizado para deteção de obstáculos, assegurando uma navegação segura (abrandar e parar). O controlo dos dois motores TT é realizado pelo driver L298N, que também fornece energia ao microcontrolador ATmega328P. Adicionalmente, o veículo está equipado com dois encoders para medir a velocidade das rodas e um display para visualização da velocidade destas. Esta configuração permite um controlo eficaz e uma operação autónoma estável, alinhada com as melhores práticas observadas no estado da arte dos AGVs.
+            </p>
+        </section>
+    </main>
+</body>
+</html>

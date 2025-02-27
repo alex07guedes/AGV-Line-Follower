@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGV</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+    <header class="bg-gray-800 text-white p-4">
+        <nav class="flex justify-between items-center">
+            <div class="text-lg font-semibold">
+                <a href="AGV.html">AGV</a>
+            </div>
+            <ul class="flex space-x-4">
+                <li><a href="Introdução.html" class="hover:text-gray-400">Introdução</a></li>
+                <li><a href="Arquitetura.html" class="hover:text-gray-400">Arquitetura</a></li>
+                <li><a href="Hardware.html" class="hover:text-gray-400">Hardware</a></li>
+                <li><a href="Software.html" class="hover:text-gray-400">Software</a></li>
+                <li><a href="Resultados.html" class="hover:text-gray-400">Resultados</a></li>
+                <li><a href="Conclusões.html" class="hover:text-gray-400">Conclusões</a></li>
+                <li><a href="Referências.html" class="hover:text-gray-400">Referências</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main class="p-16">
+        <style>
+            b {
+              color: #2d3748;
+            }
+          </style>
+        <section>
+            <h1 class="text-3xl font-bold mb-4 text-gray-800">Software</h1>
+            <p class="mb-4">
+                O software desenvolvido para o AGV foi implementado no microcontrolador ATmega328P e programado em linguagem C. O código foi projetado para integrar todos os componentes do sistema, permitindo que o veículo seguisse uma linha, detetasse obstáculos, medisse velocidades e exibisse informações em um display LCD. Para isso, foram utilizados diversos módulos e periféricos, como sensores de linha, um módulo ultrassónico, encoders, um driver L298N para controlo dos motores e uma interface I2C para o display LCD. O software também inclui rotinas de inicialização, leitura de sensores, cálculo de velocidades e controlo de motores, todas organizadas para garantir um funcionamento eficiente e responsivo do AGV. 
+            </p>
+            <p class="mb-4">
+                De modo a garantir uma estrutura organizada, os ficheiros foram distribuídos em pastas contendo ficheiros .c e .h, cada um responsável por funcionalidades específicas.
+            </p>
+            <h1 class="text-xl font-bold mb-4 text-gray-800">Sensores de Linha</h1>
+            <h3 class="text-xl font-bold mb-4 text-gray-800">- sensores_linha.c :</h3>
+            <p class="mb-4">
+                No ficheiro <b>sensores_linha.c</b>, são primeiramente definidas as bibliotecas <b>avr/io.h</b> e <b>avr/interrupt.h</b>, fornecendo acesso aos registos e configurações do microcontrolador, bem como suporte para interrupções. Adicionalmente, é incluído o ficheiro cabeçalho <b>sensores_linha.h</b> para centralizar as definições e declarações relacionadas ao módulo.
+                <br>Para além disso, é declarado um array global sensor com 3 posições, inicializado a 0. Este é definido como volatile porque o seu valor pode ser alterado em interrupções (ISRs). Este array armazena o estado dos sensores de linha (ativo ou inativo).
+            </p>
+            <div class="flex justify-center items-center">
+                <img src="images/sensor_linha_biblio.png" alt="sensor_linha_biblio" class="mb-4">
+            </div>
+            <p class="mb-4">
+                Em seguida, é implementada a função <b>init_linha( )</b>, responsável por configurar os pinos utilizados pelos sensores de linha e ativar as interrupções associadas.
+            </p>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/sensor_linha_init.png" alt="sensor_linha_init" class="mb-4">
+            </div>
+            <p class="mb-4">
+                A função init_linha( ) é responsável por configurar os pinos utilizados pelos sensores de linha e ativar as interrupções associadas. Na função init_linha( ), os pinos dos sensores <b>PB0, PD0 e PD7</b> são configurados como entradas, garantindo que o microcontrolador possa ler os seus estados.
+            </p>
+            <p class="mb-4">
+                Posteriormente, são ativadas as interrupções de mudança de estado (Pin Change Interrupts) para os grupos de pinos correspondentes, através da consulta dos registos do ATmega328P presentes no datasheet.
+            </p>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/sensor_linha_registo1.png" alt="sensor_linha_registo1" class="mb-4">
+            </div>
+            <p class="mb-4">
+                O <b>PCIE0</b> controla as interrupções associadas aos pinos do <b>PORTB</b>, que correspondem aos pinos <b>PCINT [7:0]</b>. Quando o bit PCIE0 é ativado (definido como 1) e o bit global de permissões de interrupção no registo de estado (SREG, bit I) também está ativo, qualquer alteração de estado lógico nos pinos do registo <b>PCMSK0</b> (Pin Change Mask Register 0) aciona uma interrupção. O <b>PCIE2</b> desempenha uma função semelhante, mas está associado aos pinos do <b>PORTD</b>, correspondentes aos pinos <b>PCINT[23:16]</b>. Ativar o bit PCIE2 no registo PCICR permite que mudanças de estado lógico em pinos definidos no registo <b>PCMSK2</b> (Pin Change Mask Register 2) acionem uma interrupção. 
+            </p>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/sensor_linha_registo2.png" alt="sensor_linha_registo2" class="mb-4 mt-4">
+            </div>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/sensor_linha_registo3.png" alt="sensor_linha_registo3" class="mb-4 mt-4">
+            </div>
+            <p class="mb-4">
+                Após escolher quais os registos que terão interrupções, é necessário definir quais os pinos que irão acionar as interrupções. Para tal, é necessário definir os bits correspondentes nos registos <b>PCMSK0</b> e <b>PCMSK2</b>. No caso dos sensores de linha, os registos <b>PCINT0, PCINT16 e PCINT23</b> correspondem aos pinos <b>PB0, PD0 e PD7</b> que são definidos como pinos de interrupção.
+            </p>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/sensor_linha_registo4.png" alt="sensor_linha_registo4" class="mb-4 mt-4">
+            </div>
+            <p class="mb-4">
+                A rotina de interrupção <b>ISR (PCINT0_vect)</b> é executada sempre que ocorre uma mudança no estado do pino <b>PB0</b>. Primeiramente, a interrupção verifica o estado atual do pino PB0 por meio da expressão <b>(PINB & (1 << PB0))</b>. Caso o pino esteja no nível lógico alto, a condição é verdadeira, e o valor <b>1</b> é atribuído à posição <b>sensor[0]</b>, indicando que o sensor conectado a este pino detetou algo ou está ativo. Se a condição for falsa, ou seja, o pino estiver no nível lógico baixo, o bloco else é executado, atribuindo o valor <b>0</b> ao <b>sensor[0]</b>, sinalizando que o sensor está inativo ou não detectou nada.
+            </p>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/sensor_linha_registo5.png" alt="sensor_linha_registo5" class="mb-4 mt-4">
+            </div>
+            <p class="mb-4">
+                Na segunda rotina de interrupção, <b>ISR(PCINT2_vect)</b>, o objetivo é monitorizar os estados dos pinos <b>PD0</b> e <b>PD7</b>. Quando esta ISR é acionada devido a uma mudança de estado em qualquer um desses pinos, o código executa a leitura de cada pino de forma independente. A expressão <b>(PIND & (1 << PD0))</b> verifica se o pino PD0 está em nível alto; se estiver, o valor <b>1</b> é atribuído a <b>sensor[1]</b>. Caso contrário, é atribuído <b>0</b>. Da mesma maneira, o estado do pino <b>PD7</b> é verificado com <b>(PIND & (1 << PD7))</b>, e o resultado, <b>1</b> ou <b>0</b>, é armazenado em <b>sensor[2]</b>. Assim, a ISR atualiza continuamente os valores no vetor sensor com base nos estados dos pinos monitorados, permitindo que o programa principal tome decisões com base nesses dados.
+            </p>
+            <h3 class="text-xl font-bold mb-4 text-gray-800">- sensores_linha.h :</h3>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/sensor_linha_registo6.png" alt="sensor_linha_registo6" class="mb-4 mt-4">
+            </div>
+            <p class="mb-4">
+                No caso do código apresentado, o arquivo <b>sensores_linha.h</b> é um cabeçalho que organiza a interface para o controle dos sensores de linha. Dentro do cabeçalho, é declarada a variável global <b>sensor[3]</b>, usada para armazenar os estados dos sensores de linha. A palavra <b>extern</b> indica que essa variável é definida em outro arquivo .c, mas pode ser acessada em qualquer arquivo que inclua o cabeçalho.
+            </p>
+            <p class="mb-4">
+                Também é declarada a função <b>init_linha( )</b>, que será usada para configurar os pinos e interrupções dos sensores de linha. A definição está no arquivo .c, mas ela pode ser chamada em qualquer lugar do projeto que inclua este cabeçalho.
+            </p>
+            <h3 class="text-xl font-bold mb-4 text-gray-800">Sensor Linha Pseudocódigo</h3>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/linha_pseudo.png" alt="sensor_linha_registo6" class="mb-4 mt-4 w-72">
+            </div>
+            <h1 class="text-xl font-bold mb-4 text-gray-800">Sensor Ultrassônico</h1>
+            <h3 class="text-xl font-bold mb-4 text-gray-800">- sensores_ultrassom.c :</h3>
+            <p class="mb-4">
+                Este módulo implementa a funcionalidade para controlar e medir distâncias usando um sensor ultrassônico com um microcontrolador AVR.
+            </p>
+            <p class="mb-4">
+                Inclui as seguintes bibliotecas:
+            </p>
+            <ul class="mb-4">
+                <li><b>#include &lt;avr/io.h&gt;</b>: Manipula os registos de entrada/saída (I/O) do microcontrolador.</li>
+                <li><b>#include &lt;util/delay.h&gt;</b>: Fornece funções de atraso precisas para temporização do pulso ultrassônico.</li>
+                <li><b>#include "sensores_ultrassom.h"</b>: Declara as funções para inicializar e medir distâncias com o sensor ultrassônico.</li>
+            </ul>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/ultrassom_bibliotecas.png" alt="ultrassom_bibliotecas" class="mb-4 mt-4">
+            </div>
+
+            <p class="mb-4">
+                Configuração dos pinos:
+            </p>
+            <ul class="mb-4">
+                <li><b>DDRB |= (1 << PB4);</b>: Configura o pino <b>PB4</b> como saída para enviar sinais de gatilho (TRIG).</li>
+                <li><b>DDRB &= ~(1 << PB5);</b>: Configura o pino <b>PB5</b> como entrada para receber sinais de eco (ECHO).</li>
+            </ul>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/ultrassom_config_pinos.png" alt="ultrassom_config_pinos" class="mb-4 mt-4">
+            </div>
+
+            <p class="mb-4">
+                Sequência para enviar o pulso ultrassônico:
+            </p>
+            <ul class="mb-4">
+                <li><b>PORTB &= ~(1 << PB4);</b>: Garante que o pino TRIG está em nível baixo (LOW).</li>
+                <li><b>_delay_us(2);</b>: Aguarda 2 microssegundos.</li>
+                <li><b>PORTB |= (1 << PB4);</b>: Coloca o pino TRIG em nível alto (HIGH) por 10 microssegundos para gerar o pulso.</li>
+                <li><b>_delay_us(10);</b>: Aguarda 10 microssegundos.</li>
+                <li><b>PORTB &= ~(1 << PB4);</b>: Retorna o pino TRIG para nível baixo.</li>
+            </ul>
+            <p class="mb-4">
+                Leitura do sinal ECHO:
+            </p>
+            <ul class="mb-4">
+                <li><b>while (!(PINB & (1 << PB5))):</b> Aguarda até que o pino ECHO vá para nível alto, indicando o início do eco.</li>
+                <li>Enquanto o pino ECHO estiver alto, a duração é medida em microssegundos usando <b>_delay_us(1)</b>.</li>
+                <li>Se a duração exceder 30000 microssegundos (~30ms), a função retorna <b>0</b>, indicando timeout.</li>
+            </ul>
+            <p class="mb-4">
+                Conversão do tempo para distância:
+            </p>
+            <p class="mb-4">
+                A distância é calculada com base no tempo do eco e na velocidade do som no ar:
+                <b>distância = duração / 58;</b>. O divisor 58 considera a velocidade do som no ar e o fato de o pulso percorrer a ida e volta.
+            </p>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/ultrassom_distancia.png" alt="ultrassom_distancia" class="mb-4 mt-4">
+            </div>
+
+            <p class="mb-4">
+                Reinicialização do sensor:
+            </p>
+            <ul class="mb-4">
+                <li><b>PORTB &= ~(1 << PB4);</b>: Garante que o pino TRIG está baixo.</li>
+                <li><b>_delay_ms(100);</b>: Aguarda 100ms para garantir que o sensor esteja completamente reiniciado.</li>
+            </ul>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/ultrassom_reset.png" alt="ultrassom_reset" class="mb-4 mt-4">
+            </div>
+
+            <h3 class="text-xl font-bold mb-4 text-gray-800">- sensores_ultrassom.h :</h3>
+            <p class="mb-4">
+                O cabeçalho <b>sensores_ultrassom.h</b> contém:
+            </p>
+            <ul class="mb-4">
+                <li><b>Guarda de Inclusão:</b> Usa <b>#ifndef, #define, #endif</b> para prevenir múltiplas inclusões do arquivo.</li>
+                <li><b>Declarações das funções:</b> As funções <b>init_ultrasonic()</b>, <b>measure_distance()</b>, e <b>reset_sensor()</b> são declaradas, permitindo sua utilização em outros arquivos.</li>
+            </ul>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/ultrassom_h.png" alt="ultrassom_h" class="mb-4 mt-4">
+            </div>
+            <h3 class="text-xl font-bold mb-4 text-gray-800">Sensor Ultrassom Pseudocódigo</h3>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/ultrassom_pseudo.png" alt="encoders_header" class="mb-4 mt-4 w-1/2">
+            </div>
+            <h1 class="text-xl font-bold mb-4 text-gray-800">Motores</h1>
+            <h3 class="text-xl font-bold mb-4 text-gray-800">- motores.c :</h3>
+            <p class="mb-4">
+                No ficheiro <b>motores.c</b>, é definida a biblioteca <b>avr/io.h</b> e o ficheiro cabeçalho <b>motores.h</b>. 
+            </p>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/motor_biblio.png" alt="motor_biblio" class="mb-4 mt-4">
+            </div>
+            <p class="mb-4">
+                Em seguida, é declarada a função <b>init_motores( )</b>, que configura os pinos e o Timer 0 no microcontrolador para controlar os motores utilizando PWM.
+            </p>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/motor_init.png" alt="motor_init" class="mb-4 mt-4">
+            </div>
+            <p class="mb-4">
+                Primeiramente, os pinos necessários para o controlo de direção são configurados como saídas. Os pinos <b>PC3 e PC2</b>, correspondentes às entradas <b>IN1 e IN4</b> do driver de motor, são configurados como saídas usando a instrução <b>DDRC |= (1 << PC3)  |  (1 << PC2)</b>. Em seguida, o pino <b>PB2</b>, ligado à entrada <b>IN2</b> do driver, também é configurado como saída com <b>DDRB |= (1 << PB2)</b>. O pino <b>PD1</b>, que controla a entrada <b>IN3</b> do driver, é configurado como saída com <b>DDRD |= (1 << PD1)</b>.
+            </p>
+            <p class="mb-4">
+                Finalmente, os pinos <b>PD6 e PD5</b>, ligados às entradas <b>ENA e ENB</b> do driver (responsáveis por controlar as velocidades via PWM), são configurados como saídas.
+            </p>
+            <p class="mb-4">
+                Após definir as saídas do <b>PWM</b> passou-se a sua configuração, consultando os registos do <b>Timer 0</b> no datasheet. 
+            </p>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/motor_registo1.png" alt="motor_registo1" class="mb-4 mt-4">
+            </div>
+            <p class="mb-4">
+                No modo <b>Fast PWM</b>, o Timer conta de <b>0</b> até o valor máximo <b>255</b> e reinicia imediatamente. Isso resulta em um sinal PWM com alta frequência, proporcionando uma resposta rápida às alterações no duty cycle, tornando-se no PWM ideal para o controlo dos motores do AGV. Desta maneira, para selecionar o modo <b>Fast PWM</b> no Timer 0, os bits <b>WGM00 e WGM01</b> no registo <b>TCCR0A</b> são definidos como <b>1</b>.
+            </p>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/fast_pwm.png" alt="fast_pwm" class="mb-4 mt-4">
+            </div>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/motor_registo2.png" alt="motor_registo2" class="mb-4 mt-4">
+            </div>
+            <p class="mb-4">
+                A expressão <b>(1 << COM0A1) | (1 << COM0B1)</b> configura os pinos <b>OC0A</b> e <b>OC0B</b> para operar no modo <b>"Clear on Compare Match" (Modo Non-Inverting)</b>. Isso configura ambos os pinos para gerar sinais PWM, permitindo o controle simultâneo de dois motores por meio dos sinais <b>PD6 (OC0A) e PD5 (OC0B)</b>.
+            </p>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/motor_registo3.png" alt="motor_registo3" class="mb-4 mt-4">
+            </div>
+            <p class="mb-4">
+                Para além disso, o <b>Prescaler</b> é definido como <b>1</b>, de modo a obter a maior frequência possível. Isto é feito através da expressão <b>TCCR0B |= (1 << CS00)</b>.
+            </p>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/motor_registo5.png" alt="motor_registo5" class="mb-4 mt-4">
+            </div>
+            <p class="mb-4">
+                Ao usar a expressão para calcular o valor da frequência do PWM, obtém-se o seguinte valor:
+            </p>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/motor_formula.png" alt="motor_formula" class="mb-4 mt-4">
+            </div>
+            <p class="mb-4">
+                Por fim, foram desenvolvidas duas funções <b>motor_esquerdo( ) e motor_direito( )</b> que controlam, respetivamente, o motor esquerdo e o motor direito do driver <b> L298N</b> .
+            </p>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/motor_esquerdo.png" alt="motor_esquerdo" class="mb-4 mt-4 mr-12">
+                <img src="images/motor_direito.png" alt="motor_direito" class="mb-4 mt-4">
+            </div>
+            <p class="mb-4">
+                Ambas recebem dois parâmetros: <b>direção</b>, que define o sentido de rotação do motor (1 para frente, -1 para trás e 0 para parar o motor), e <b>velocidade</b>, que especifica a velocidade do motor, representada como um valor de <b>duty cycle</b> aplicado ao sinal PWM.
+            </p>
+            <p class="mb-4">
+                Na função <b>motor_esquerdo</b>, se a direção for igual a <b>1</b> (motor roda para a frente), o pino <b>IN1 (PC3)</b> é ativado com um nível lógico alto, enquanto o pino <b>IN2 (PB2)</b> é desativado com um nível lógico baixo. Isso faz o motor rodar no sentido horário. Se a direção for igual a <b>-1</b> (motor roda para trás), o pino <b>IN2 (PB2)</b> é ativado, e o pino <b>IN1 (PC3)</b> é desativado, invertendo a direção do motor para o sentido anti-horário. Caso a direção seja igual a <b>0</b>, ambos os pinos <b>IN1 e IN2</b> são desativados, parando o motor. A velocidade do motor é ajustada configurando o valor do registador <b>OCR0A</b>, que define o duty cycle do sinal PWM gerado no pino de controle de velocidade do motor esquerdo.
+            </p>
+            <p class="mb-4">
+                A função <b>motor_direito</b> segue a mesma lógica, mas com os pinos correspondentes ao motor direito. Se a direção for <b>1</b>, o pino <b>IN3 (PD1)</b> é ativado e o pino <b>IN4 (PC2)</b> é desativado, fazendo o motor girar no sentido horário. Se a direção for <b>-1</b>, o pino <b>IN4 (PC2)</b> é ativado e o pino <b>IN3 (PD1)</b> é desativado, invertendo a direção para o sentido anti-horário. Se a direção for <b>0</b>, ambos os pinos <b>IN3 e IN4</b> são desativados, parando o motor. A velocidade do motor direito é ajustada configurando o registador <b>OCR0B</b>, que define o duty cycle do sinal PWM gerado para o controle de velocidade do motor direito.
+            </p>
+            <h3 class="text-xl font-bold mb-4 text-gray-800">- motores.h :</h3>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/motor_registo4.png" alt="motor_registo4" class="mb-4 mt-4">
+            </div>
+            <p class="mb-4">
+                O arquivo <b>motores.h</b> declara as funções necessárias para inicializar e controlar os motores de um sistema. Ele utiliza diretivas de proteção para evitar múltiplas inclusões e serve como ponto de acesso central para todas as funcionalidades relacionadas ao controle dos motores. 
+            </p>
+            <h3 class="text-xl font-bold mb-4 text-gray-800">Motores Pseudocódigo</h3>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/motor_pseudo.png" alt="motor_registo4" class="mb-4 mt-4 w-2/5">
+            </div>
+            <h1 class="text-xl font-bold mb-4 text-gray-800">Encoders</h1>
+            <h3 class="text-xl font-bold mb-4 text-gray-800">- encoders.c :</h3>
+            <p class="mb-4">
+                No ficheiro <b>encoders.c</b>, são definidas as bibliotecas <b>avr/io.h</b> e <b>avr/interrupt.h</b>, bem como o ficheiro cabeçalho <b>encoders.h</b>. Este código é responsável por medir a velocidade e contar o número de rotações dos motores através dos encoders, além de implementar um temporizador para calcular a velocidade com base no tempo.
+            </p>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/encoders_biblio.png" alt="encoders_biblio" class="mb-4 mt-4">
+            </div>
+            <p class="mb-4">
+                Inicialmente, são declaradas variáveis globais voláteis, que armazenam as informações relacionadas aos encoders. As variáveis <b>voltas_esq</b> e <b>voltas_dir</b> contam o número de pulsos dos encoders dos motores esquerdo e direito, respetivamente. Já as variáveis <b>velocidade_esq</b> e <b>velocidade_dir</b> armazenam a velocidade linear calculada para cada motor, utilizando os valores dos pulsos registrados.
+            </p>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/encoders_vars.png" alt="encoders_vars" class="mb-4 mt-4">
+            </div>
+            <p class="mb-4">
+                A função <b>init_encoders()</b> configura os pinos ligados aos encoders como entradas e ativa as interrupções externas correspondentes. Os pinos <b>PD2</b> e <b>PD3</b>, ligados aos sinais dos encoders, são configurados como entradas com a instrução <b>DDRD &= ~((1 << PD2) | (1 << PD3))</b>. Em seguida, os bits <b>ISC00</b> e <b>ISC10</b> no registo <b>EICRA</b> são configurados para ativar interrupções em qualquer transição de sinal nos pinos <b>INT0</b> e <b>INT1</b>. Por fim, o registo <b>EIMSK</b> é configurado para habilitar as interrupções externas <b>INT0</b> e <b>INT1</b>.
+            </p>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/encoders_init.png" alt="encoders_init" class="mb-4 mt-4">
+            </div>
+            <p class="mb-4">
+                A função <b>init_timer1()</b> é utilizada para configurar o Timer 1 do microcontrolador, que será usado para calcular periodicamente a velocidade dos motores. O modo <b>CTC (Clear Timer on Compare Match)</b> é selecionado configurando o bit <b>WGM12</b> no registo <b>TCCR1B</b>. O valor do registo <b>OCR1B</b> é definido como <b>31249</b>, o que equivale a um intervalo de 0,5 segundos, assumindo um clock de 16 MHz e um prescaler de <b>256</b>. O bit <b>CS12</b> no mesmo registo configura o prescaler, e o registo <b>TIMSK1</b> ativa a interrupção no momento de comparação do Timer 1.
+            </p>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/encoders_timer.png" alt="encoders_timer" class="mb-4 mt-4">
+            </div>
+            <p class="mb-4">
+                As interrupções externas são definidas através das funções <b>ISR(INT0_vect)</b> e <b>ISR(INT1_vect)</b>. Essas funções incrementam, respetivamente, as variáveis <b>voltas_esq</b> e <b>voltas_dir</b>, sempre que ocorre uma transição no sinal dos encoders dos motores esquerdo e direito.
+            </p>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/encoders_isr.png" alt="encoders_isr" class="mb-4 mt-4">
+            </div>
+            <p class="mb-4">
+                A interrupção <b>ISR(TIMER1_COMPB_vect)</b> é acionada a cada 0,5 segundos (de acordo com a configuração do Timer 1). Nela, as velocidades dos motores esquerdo e direito são calculadas com base no número de pulsos registados e nas características físicas do sistema. A fórmula utilizada considera que cada pulso do encoder equivale a uma fração da circunferência da roda, cuja fórmula é dada por <b>(2 * π * raio_da_roda)</b>. O valor calculado é dividido pelo intervalo de tempo (0,5 segundos) para determinar a velocidade linear em metros por segundo. Após o cálculo, as variáveis <b>voltas_esq</b> e <b>voltas_dir</b> são reinicializadas para começar a contagem de um novo período.
+            </p>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/encoders_timer_isr.png" alt="encoders_timer_isr" class="mb-4 mt-4">
+            </div>
+            <p class="mb-4">
+                Com essas funções e configurações, o sistema é capaz de monitorar as rotações e calcular as velocidades dos motores em tempo real, informações fundamentais para o controlo e navegação do AGV.
+            </p>
+            <h3 class="text-xl font-bold mb-4 text-gray-800">- encoders.h :</h3>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/encoders_header.png" alt="encoders_header" class="mb-4 mt-4">
+            </div>
+            <p class="mb-4">
+                O ficheiro <b>encoders.h</b> declara as funções e variáveis globais necessárias para a leitura e cálculo das informações dos encoders. Ele utiliza diretivas de proteção para evitar múltiplas inclusões e serve como um ponto de acesso às funcionalidades relacionadas ao controlo e medição dos encoders do sistema.
+            </p>
+            <h3 class="text-xl font-bold mb-4 text-gray-800">Encoder Pseudocódigo</h3>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/encoder_pseudo.png" alt="encoders_header" class="mb-4 mt-4 w-96">
+            </div>
+            <h1 class="text-xl font-bold mb-4 text-gray-800">LED</h1>
+            <h3 class="text-xl font-bold mb-4 text-gray-800">- LED.c :</h3>
+            <p class="mb-4">
+                O código para o LED que pisca a 1Hz consiste em configurar o <b>Timer1</b> do microcontrolador AVR para gerar uma onda quadrada com uma frequência que faz o LED acender e apagar uma vez por segundo (<b>1Hz</b>).
+                <br><br> A escolha do Timer1 deve-se a ser um timer de 16 bits que tem um valor de comparação bastante alto, neste caso, pode variar entre 0 e 65535.
+                Pretende-se que a onda quadrada tenha uma resolução muito superior de modo a obter leituras precisas e com exatidão. Para além disso, o timer de 16 bits permite atingir frequências muito mais reduzidas como é o caso da frequência de 1 Hz que se pretende obter, para chegar a estes valores num timer de 8 bits seria necessário recorrer ao uso de interrupções.
+
+            </p>
+            <p class="mb-4">
+                Inclui as seguintes bibliotecas no arquivo <b>LED.c</b>:
+                <ul>
+                    <li><b>#include &lt;avr/io.h&gt;</b>: Manipula os registros de entrada e saída do microcontrolador.</li>
+                    <li><b>#include "LED.h"</b>: Declara a função <b>init_wave()</b>, que inicializa o <b>Timer1</b> para gerar a onda quadrada que controla o LED.</li>
+                </ul>
+            </p>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/led_biblio.png" alt="led_biblio" class="mt-4">
+            </div>
+            <p class="mb-4">
+                O pino <b>PB1</b> do <b>PORTB</b>, que será usado para controlar o LED, é configurado como saída com a instrução: <b>DDRB |= (1 << PB1);</b>.
+            </p>    
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/LED_code.png" alt="led_biblio" class="mt-4">
+            </div>
+            <p class="mb-4">
+                O <b>Timer1</b> é configurado no modo <b>Clear Timer on Compare Match (CTC)</b> para gerar uma onda quadrada. A configuração do registro <b>TCCR1A</b> e <b>TCCR1B</b> é feita conforme a seguir:
+            </p>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/LED_timer1.png" alt="led_tccr1" class="mb-4 mt-4">
+            </div>
+            <p class="mb-4">
+                Em primeiro lugar, definiu-se o Timer 1 no modo Clear Timer on Compare Match (CTC) através da configuração de WGM10/WGM11/WGM13 como 0 e WGM12 como 1.
+            </p>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/LED_pwm.png" alt="LED_pwm" class="mb-4 mt-4">
+            </div>
+            <p class="mb-4">
+                <ul>
+                    <li><b>TCCR1B |= (1 << WGM12);</b>: Define o modo CTC. O contador será reiniciado para zero ao atingir o valor do registro <b>OCR1A</b>.</li>
+                    <li><b>TCCR1A |= (1 << COM1A0);</b>: Configura o modo <b>Toggle OC1A on Compare Match</b>, alternando o estado do pino <b>OC1A</b> (mapeado em <b>PB1</b>) a cada correspondência.</li>
+                </ul>
+                <p>
+                    <br>Seguidamente, configurou-se o Timer 1 para o modo Toggle OC1A/OC1B on Compare Match, com a configuração COM1A0 como 1 e COM1A1 como 0.
+                </p>
+            </p>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/led_comp.png" alt="led_toggle" class="mb-4 mt-4">
+            </div>
+            <p class="mb-4">
+                No modo CTC, o temporizador é configurado para contar até um valor específico, este é definido pelo registrador de comparação OCR1 (Output Compare Register). Quando o valor do contador atinge o valor de OCR1, ele vai automaticamente a 0 (clear), o que 
+                facilita a criação de uma frequência específica. 
+
+                Ao configurar o timer para Toggle OC1A/OC1B on Compare Match juntamente com o CTC referido acima, o ATmega328P irá gerar uma onda quadrada na saída do pino associado (OC1A ou OC1B), alternando o estado do pino (entre HIGH e LOW) toda vez que o temporizador atinge o valor de comparação no modo CTC.
+
+                Após configurar o registo TCCR1A e TCCR1B é necessário definir a frequência da onda 
+                quadrada a 1 Hz com CS12 como 1
+
+            </p>
+            <p class="mb-4">
+                A frequência desejada de 1Hz é obtida com a configuração de um prescaler de <b>256</b> no registro <b>TCCR1B</b>:
+                <b>TCCR1B |= (1 << CS12);</b>
+            </p>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/led_prescaler.png" alt="led_prescaler" class="mb-4 mt-4">
+            </div>
+            <p class="mb-4">
+                O valor de comparação do registrador <b>OCR1A</b> é calculado como <b>31249</b> para gerar a frequência de 1Hz:
+                <b>OCR1A = 31249;</b>
+            </p>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/led_ocr1a.png" alt="led_ocr1a" class="mb-4 mt-4">
+            </div>
+            <h3 class="text-xl font-bold mb-4 text-gray-800">- LED.h :</h3>
+            <p class="mb-4">
+                O arquivo <b>LED.h</b> inclui as seguintes funcionalidades:
+            </p>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/led_h.png" alt="led_h" class="mb-4 mt-4">
+            </div>
+            <ul class="mb-4">
+                <li><b>Include Guard:</b> Previne múltiplas inclusões do cabeçalho usando <b>#ifndef LED_H_ ... #endif</b>.</li>
+                <li><b>Declaração de Função:</b> Declara a função <b>void init_wave()</b>, responsável por configurar o Timer1 e controlar o LED.</li>
+            </ul>
+            <h3 class="text-xl font-bold mb-4 text-gray-800">- LED Pseudocódigo</h3>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/led_pseudo.png" alt="led_h" class="mb-4 mt-4 w-56">
+            </div>
+            <h1 class="text-xl font-bold mb-4 text-gray-800">Módulo LCD (display.c)</h1>
+
+            <p class="mb-4">
+                Este módulo configura e controla o display LCD utilizando comunicação I2C para exibir informações, como comandos e dados, no AGV. O código faz uso de bibliotecas padrão do AVR e um header personalizado <b>display.h</b>.
+            </p>
+
+            <h3 class="text-xl font-bold mb-4 text-gray-800">Inicialização do I2C</h3>
+            <ul class="mb-4">
+                <li><b>void init_I2C()</b>: Configura o protocolo I2C para 100kHz e ativa o módulo TWI no microcontrolador.</li>
+            </ul>
+            <p class="mb-4">
+                Detalhes do código:
+            </p>
+            <ul class="mb-4">
+                <li><b>TWBR = 72;</b>: Define o bit rate para o I2C.</li>
+                <li><b>TWCR = (1 &lt;&lt; TWEN);</b>: Habilita o TWI (Two-Wire Interface).</li>
+            </ul>
+
+            <h3 class="text-xl font-bold mb-4 text-gray-800">Funções de Controle do I2C</h3>
+            <p class="mb-4">Funções auxiliares para iniciar, parar e enviar dados via I2C:</p>
+            <ul class="mb-4">
+                <li><b>void start_I2C()</b>: Envia o sinal de início (START) para o barramento I2C.</li>
+                <li><b>void stop_I2C()</b>: Envia o sinal de parada (STOP) para o barramento I2C.</li>
+                <li><b>void data_I2C(int data)</b>: Envia um byte de dados para o barramento I2C.</li>
+            </ul>
+
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/operacoes_i2c.png" alt="Operações I2C" class="mb-4 mt-4">
+            </div>
+
+            <h3 class="text-xl font-bold mb-4 text-gray-800">Funções para Controle do LCD</h3>
+
+            <p class="mb-4">As seguintes funções são usadas para enviar comandos e dados ao LCD:</p>
+            <ul class="mb-4">
+                <li>
+                    <b>void comando_LCD(int data)</b>: Envia comandos para o LCD com ativação/desativação de pulso Enable (E). 
+                    <ul>
+                        <li><b>data |= 0x08;</b>: Adiciona o bit de luz de fundo ao comando.</li>
+                        <li>Os pulsos Enable garantem que o LCD processe o comando.</li>
+                    </ul>
+                </li>
+                <li>
+                    <b>void LCD_SendByte(uint8_t rs, uint8_t data)</b>: Divide o dado em nibble alto e baixo e os envia separadamente.
+                    <ul>
+                        <li><b>rs</b>: Define se é comando (<b>0</b>) ou dado (<b>1</b>).</li>
+                    </ul>
+                </li>
+                <li><b>void LCD_Command(uint8_t cmd)</b>: Envia comandos específicos ao LCD.</li>
+                <li><b>void LCD_Char(char data)</b>: Exibe caracteres no LCD enviando os dados correspondentes.</li>
+            </ul>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/comando_lcd.png" alt="Operações I2C" class="mb-4 mt-4">
+            </div>
+            <h3 class="text-xl font-bold mb-4 text-gray-800">Inicialização do LCD</h3>
+            <p class="mb-4">A função <b>init_LCD()</b> configura o LCD para o modo de 4 bits e define as opções de exibição:</p>
+            <ul class="mb-4">
+                <li><b>_delay_ms(10)</b>: Aguarda o LCD estar pronto após a alimentação.</li>
+                <li><b>LCD_Command(0x03)</b>: Realiza sequência de inicialização padrão do LCD.</li>
+                <li><b>LCD_Command(0x02)</b>: Define o modo de 4 bits.</li>
+                <li><b>LCD_Command(0x28)</b>: Configura o LCD para 2 linhas e matriz de caracteres 5x8 pontos.</li>
+                <li><b>LCD_Command(0x0C)</b>: Ativa o display com cursor oculto.</li>
+                <li><b>LCD_Command(0x06)</b>: Define o incremento automático do cursor.</li>
+                <li><b>LCD_Command(0x01)</b>: Limpa o display.</li>
+            </ul>
+
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/init_lcd.png" alt="Inicialização do LCD" class="mb-4 mt-4">
+            </div>
+
+            <h3 class="text-xl font-bold mb-4 text-gray-800">Função para Exibir Strings</h3>
+            <p class="mb-4">
+                A função <b>void LCD_String(char *str)</b> é usada para exibir uma string no LCD, enviando caractere por caractere:
+            </p>
+            <ul class="mb-4">
+                <li><b>while (*str)</b>: Continua até que o caractere nulo (<b>'\0'</b>) seja encontrado.</li>
+                <li><b>LCD_Char(*str++)</b>: Exibe o caractere atual e avança para o próximo.</li>
+            </ul>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/lcd_string.png" alt="Inicialização do LCD" class="mb-4 mt-4">
+            </div>
+            <h3 class="text-xl font-bold mb-4 text-gray-800">LCD Pseudocódigo</h3>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/lcd_pseudo.png" alt="Inicialização do LCD" class="mb-4 mt-4 w-64">
+            </div>
+            <h1 class="text-xl font-bold mb-4 text-gray-800">Código Principal (main.c)</h1>
+            <p class="mb-4">
+                O arquivo <b>main.c</b> implementa o sistema de controlo do carro AGV que utiliza sensores de linha, sensores ultrassônicos, motores, display LCD, entre outros componentes.
+            </p>
+            
+            <h3 class="text-xl font-bold mb-4 text-gray-800">Inclusão de Bibliotecas</h3>
+            <p class="mb-4">
+                Inclui bibliotecas essenciais para o funcionamento do microcontrolador AVR:
+            </p>
+            <ul class="mb-4">
+                <li><b>#include &lt;avr/io.h&gt;</b>: Manipulação de registros de entrada/saída (I/O).</li>
+                <li><b>#include &lt;avr/interrupt.h&gt;</b>: Controle de interrupções.</li>
+                <li><b>#include &lt;util/delay.h&gt;</b>: Funções de atraso para temporização.</li>
+                <li>Headers personalizados para diferentes módulos: sensores de linha, encoders, display, motores, LED, entre outros.</li>
+            </ul>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/main_includes.png" alt="main_includes" class="mb-4 mt-4">
+            </div>
+            
+            <h3 class="text-xl font-bold mb-4 text-gray-800">Inicializações</h3>
+            <p class="mb-4">
+                Diversas funções de inicialização são chamadas no início do programa:
+            </p>
+            <ul class="mb-4">
+                <li><b>init_linha()</b>: Inicializa os sensores de linha para detecção de linhas no chão.</li>
+                <li><b>init_wave()</b>: Configura o sistema do LED que pisca a 1Hz.</li>
+                <li><b>init_motores()</b>: Inicializa os motores para controle de velocidade e direção.</li>
+                <li><b>init_I2C()</b>: Configura a comunicação I2C, utilizada no display LCD.</li>
+                <li><b>init_LCD()</b>: Inicializa o display LCD para exibição de informações.</li>
+                <li><b>init_encoders()</b>: Configura os encoders para medir velocidade ou posição dos motores.</li>
+                <li><b>init_timer1()</b>: Inicializa o Timer1.</li>
+                <li><b>init_ultrasonic()</b>: Configura o sensor ultrassônico (TRIG como saída, ECHO como entrada).</li>
+                <li><b>sei()</b>: Ativa interrupções globais no microcontrolador.</li>
+            </ul>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/main_initializations.png" alt="main_initializations" class="mb-4 mt-4">
+            </div>
+            
+            <h3 class="text-xl font-bold mb-4 text-gray-800">Variáveis Globais</h3>
+            <p class="mb-4">
+                Algumas variáveis globais são utilizadas para armazenar estados e valores:
+            </p>
+            <ul class="mb-4">
+                <li><b>buffer_esq</b> e <b>buffer_dir</b>: Arrays para armazenar as velocidades dos motores esquerdo e direito.</li>
+                <li><b>curva_esq</b>, <b>frente</b>, <b>curva_dir</b>: Flags indicando o estado atual do movimento.</li>
+            </ul>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/main_variables.png" alt="main_variables" class="mb-4 mt-4">
+            </div>
+            <h3 class="text-xl font-bold mb-4 text-gray-800">Loop Principal</h3>
+            <p class="mb-4">
+                O ciclo <b>while(1)</b> é o loop principal do programa e executa continuamente as seguintes ações:
+            </p>
+            <ul class="mb-4">
+                <li><b>measure_distance()</b>: Mede a distância usando o sensor ultrassônico e armazena o valor na variável <b>distância</b>.</li>
+                <li><b>reset_sensor()</b>: Reinicializa o sensor caso a distância medida seja <b>0</b>.</li>
+            </ul>
+            <p class="mb-4">
+                Com base na distância medida:
+            </p>
+            <ul class="mb-4">
+                <li><b>Distância &lt; 10 cm:</b> Os motores param (velocidade = 0).</li>
+                <li><b>10 cm ≤ Distância &lt; 20 cm:</b> O carro se move lentamente (velocidade = 130).</li>
+            </ul>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/main_distance_control.png" alt="main_distance_control" class="mb-4 mt-4">
+            </div>
+            
+            <h3 class="text-xl font-bold mb-4 text-gray-800">Verificação dos Sensores de Linha</h3>
+            <p class="mb-4">
+                Dependendo do estado dos sensores de linha, o carro ajusta sua direção:
+            </p>
+            <ul class="mb-4">
+                <li><b>Caso 1:</b> Carro centrado ou ligeiramente desalinhado: Ambos os motores avançam com velocidade 165.</li>
+                <li><b>Caso 2:</b> Sensor esquerdo detecta linha: Carro vira à esquerda (motor esquerdo para, motor direito avança).</li>
+                <li><b>Caso 3:</b> Sensor direito detecta linha: Carro vira à direita (motor direito para, motor esquerdo avança).</li>
+            </ul>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/main_line_control.png" alt="main_line_control" class="mb-4 mt-4">
+            </div>
+            
+            <h3 class="text-xl font-bold mb-4 text-gray-800">Exibição no LCD</h3>
+            <p class="mb-4">
+                Informações sobre a velocidade dos motores são exibidas no display LCD:
+            </p>
+            <ul class="mb-4">
+                <li><b>LCD_Command(0x80)</b>: Move o cursor para o início da primeira linha.</li>
+                <li><b>LCD_String("Velocidade cm/s")</b>: Exibe o texto "Velocidade cm/s".</li>
+                <li><b>dtostrf()</b>: Converte as velocidades dos motores para strings.</li>
+                <li><b>LCD_Command(0xC0)</b>: Move o cursor para o início da segunda linha.</li>
+                <li><b>LCD_String("L")</b> e <b>LCD_String(" R")</b>: Exibem as velocidades dos motores esquerdo e direito.</li>
+            </ul>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/main_lcd_display.png" alt="main_lcd_display" class="mb-4 mt-4">
+            </div>
+            <h3 class="text-xl font-bold mb-4 text-gray-800">Main Pseudocódigo</h3>
+            <div class="flex justify-center items-center mb-4">
+                <img src="images/main_pseudo.png" alt="main_lcd_display" class="mb-4 mt-4 w-3/5">
+            </div>
+        </section>
+    </main>

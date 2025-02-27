@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGV</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="min-h-screen">
+    <header class="bg-gray-800 text-white p-4">
+        <nav class="flex justify-between items-center">
+            <div class="text-lg font-semibold">
+                <a href="AGV.html">AGV</a>
+            </div>
+            <ul class="flex space-x-4">
+                <li><a href="Introdução.html" class="hover:text-gray-400">Introdução</a></li>
+                <li><a href="Arquitetura.html" class="hover:text-gray-400">Arquitetura</a></li>
+                <li><a href="Hardware.html" class="hover:text-gray-400">Hardware</a></li>
+                <li><a href="Software.html" class="hover:text-gray-400">Software</a></li>
+                <li><a href="Resultados.html" class="hover:text-gray-400">Resultados</a></li>
+                <li><a href="Conclusões.html" class="hover:text-gray-400">Conclusões</a></li>
+                <li><a href="Referências.html" class="hover:text-gray-400">Referências</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main class="p-16">
+        <style>
+            b {
+              color: #2d3748;
+            }
+          </style>
+        <section>
+            <h1 class="text-3xl font-bold mb-4 text-gray-800">Conclusões</h1>
+            <p class="mb-4">
+                Neste trabalho, desenvolvemos um sistema de controlo para um Carro AGV (Automated Guided Vehicle) seguidor de linha, utilizando uma série de componentes eletrónicos e sensores para garantir o seu funcionamento eficiente. A principal função do AGV foi seguir uma linha traçada no solo, utilizando três sensores de linha TCRT5000 para detetar a presença da linha e ajustar o movimento do veículo.
+                <br><br>Para garantir a segurança e estabilidade do AGV, incorporámos o sensor ultrassónico HC-SR04, que permitiu ao veículo parar ou abrandar automaticamente quando um obstáculo foi detetado à sua frente. Este comportamento foi possível graças ao uso do microcontrolador ATmega328P, que geriu a lógica de controlo e as interações entre os sensores, motores e outros componentes.
+                <br><br>A utilização dos motores DC TT, controlados por um driver L298N, assegurou o movimento do AGV, enquanto os encoders HC-020K permitiram medir de forma precisa a rotação das rodas, garantindo controlo sobre a velocidade e a trajetória do veículo. Para além disso, um display LCD foi integrado ao sistema para fornecer informações em tempo real sobre a velocidade do AGV, facilitando a monitorização durante a operação.
+                <br><br>Adicionalmente, foi incorporado um LED vermelho a piscar a 1 Hz como indicador visual de operação, proporcionando uma forma simples de verificar se o AGV está em funcionamento. A alimentação do sistema foi assegurada por uma pilha de 9V, fornecendo energia suficiente para os componentes.
+                <br><br>Em resumo, o projeto foi bem-sucedido na integração de diversos componentes para criar um AGV funcional e eficiente. A combinação de sensores de linha, sensor de distância, motores com encoders e o controlo por microcontrolador resultou num sistema autónomo capaz de seguir a linha, evitar obstáculos e fornecer feedback visual sobre o seu estado. Este trabalho permitiu aprofundar os conhecimentos em automação, sistemas embarcados e controlo de movimento, evidenciando a importância da integração de diferentes tecnologias para a realização de um sistema robótico autónomo.
+
+            </p>

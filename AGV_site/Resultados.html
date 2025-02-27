@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGV</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+    <header class="bg-gray-800 text-white p-4">
+        <nav class="flex justify-between items-center">
+            <div class="text-lg font-semibold">
+                <a href="AGV.html">AGV</a>
+            </div>
+            <ul class="flex space-x-4">
+                <li><a href="Introdução.html" class="hover:text-gray-400">Introdução</a></li>
+                <li><a href="Arquitetura.html" class="hover:text-gray-400">Arquitetura</a></li>
+                <li><a href="Hardware.html" class="hover:text-gray-400">Hardware</a></li>
+                <li><a href="Software.html" class="hover:text-gray-400">Software</a></li>
+                <li><a href="Resultados.html" class="hover:text-gray-400">Resultados</a></li>
+                <li><a href="Conclusões.html" class="hover:text-gray-400">Conclusões</a></li>
+                <li><a href="Referências.html" class="hover:text-gray-400">Referências</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main class="p-16">
+        <style>
+            b {
+              color: #2d3748;
+            }
+          </style>
+        <section>
+            <h1 class="text-3xl font-bold mb-4 text-gray-800">Arquitetura</h1>
+            <p class="mb-4">
+                Nesta seção, serão apresentados os resultados obtidos durante a execução do percurso pelo AGV (Automated Guided Vehicle). As fotos e vídeos ilustram o desempenho do veículo em situações práticas, destacando sua capacidade de seguir a linha traçada e reagir a obstáculos no trajeto.
+            </p>
+            <div class="flex justify-center items-center">
+                <img src="images/AGV_frente.jpg" alt="AGV_frente" class="w-96">
+                <img src="images/AGV_esquerda.jpg" alt="AGV_esquerda" class="w-96">
+                <img src="images/AGV_direita.jpg" alt="AGV_direita" class="w-96">
+            </div>
+            <div class="flex justify-center mt-4 items-center">
+                <img src="images/AGV_cimaatras.jpg" alt="AGV_cimaatras" class="w-96">
+                <img src="images/AGV_baixo.jpg" alt="AGV_baixo" class="w-96">
+                <img src="images/AGV_cima.jpg" alt="AGV_cima" class="w-96">
+            </div>
+            <h1 class="text-xl font-bold mb-4 mt-4 text-gray-800">Circuito desenhado para o AGV percorrer:</h1>
+            <div class="flex justify-center mt-4 items-center">
+                <img src="images/AGV_pista.jpg" alt="AGV_pista" class="w-3/5">
+            </div>
+            <h1 class="text-xl font-bold mb-4 mt-4 text-gray-800">AGV a percorrer a pista desenhada:</h1>
+            <div class="flex justify-center mt-4 items-center">
+                <video controls>
+                    <source src="images/AGV_1.mp4" type="video/mp4">
+                </video>
+                <video controls>
+                    <source src="images/AGV_2.mp4" type="video/mp4">
+                </video>
+            </div>
+        </section>
+    </main>

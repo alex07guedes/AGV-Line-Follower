@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGV</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+    <header class="bg-gray-800 text-white p-4">
+        <nav class="flex justify-between items-center">
+            <div class="text-lg font-semibold">
+                <a href="AGV.html">AGV</a>
+            </div>
+            <ul class="flex space-x-4">
+                <li><a href="Introdução.html" class="hover:text-gray-400">Introdução</a></li>
+                <li><a href="Arquitetura.html" class="hover:text-gray-400">Arquitetura</a></li>
+                <li><a href="Hardware.html" class="hover:text-gray-400">Hardware</a></li>
+                <li><a href="Software.html" class="hover:text-gray-400">Software</a></li>
+                <li><a href="Resultados.html" class="hover:text-gray-400">Resultados</a></li>
+                <li><a href="Conclusões.html" class="hover:text-gray-400">Conclusões</a></li>
+                <li><a href="Referências.html" class="hover:text-gray-400">Referências</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main class="p-16">
+        <section>
+            <h1 class="text-3xl font-bold mb-4 text-gray-800">Arquitetura</h1>
+            <p class="mb-4">
+                A arquitetura do projeto foi concebida para integrar os diferentes subsistemas do AGV de forma eficiente e modular, garantindo a comunicação entre componentes e a funcionalidade esperada. Durante o desenvolvimento do projeto, o sistema foi estruturado em subsistemas principais, incluindo sensores, controle e processamento, atuadores e interface do utilizador, de modo que todos os subsistemas interajam entre si da forma esperada.
+            </p>
+            <div class="flex justify-center items-center mt-8 mb-8">
+                <img src="images/AGV.drawio.png" alt="AGV" class="w-1/2">
+            </div>
+            <h1 class="text-xl font-bold mb-4 text-gray-800">Microcontrolador ATmega328P</h1>
+            <p class="mb-4">
+                O ATmega328P foi reaproveitado de um trabalho anterior devido às suas características robustas, como timers, PWM, e pinos suficientes para comunicação com o LCD, sensores e motores. Este microcontrolador é ideal para controlar os diversos periféricos do projeto e garante uma integração eficiente de todos os componentes. O seu uso otimiza os recursos já disponíveis, mantendo o projeto económico e funcional. 
+            </p>
+            <h1 class="text-xl font-bold mb-4 text-gray-800">Sensores de Linha (3 x TCRT5000)</h1>
+            <p class="mb-4">
+                Os três sensores de linha TCRT5000 são essenciais para a navegação do AGV. O sensor central segue a linha preta principal, enquanto os sensores laterais ajudam o veículo a manter-se alinhado e a realizar curvas. Estes sensores são cruciais em interseções, onde todos os sensores detetam preto, indicando a presença de um cruzamento, permitindo que o AGV continue em frente com segurança.
+            </p>
+            <h1 class="text-xl font-bold mb-4 text-gray-800">Sensor Ultrassónico (1 x HC-SR04)</h1>
+            <p class="mb-4">
+                O sensor de distância HC-SR04 está posicionado na frente do veículo e serve para prevenir colisões. Este sensor mede a distância até aos obstáculos, permitindo que o AGV desacelere quando um objeto se aproxima e pare completamente se o objeto estiver muito próximo. Esta funcionalidade é vital para a segurança e eficiência do sistema. 
+            </p>
+            <h1 class="text-xl font-bold mb-4 text-gray-800">Driver de Motor (L298N)</h1>
+            <p class="mb-4">
+                O L298N é utilizado para controlar os motores TT de forma simples e eficiente. Além disso, o driver fornece alimentação ao microcontrolador ATmega328P, garantindo que todos os componentes recebam a energia necessária para funcionar corretamente. O L298N é uma escolha excelente devido à sua confiabilidade e facilidade de uso. 
+            </p>
+            <h1 class="text-xl font-bold mb-4 text-gray-800">Motores DC (2 x TT)</h1>
+            <p class="mb-4">
+                Os motores TT são responsáveis pelo movimento do AGV. Controlados pelo L298N, eles permitem que o veículo se desloque em diferentes direções e velocidades, de acordo com os comandos processados pelo ATmega328P. A locomoção precisa e responsiva dos motores é fundamental para a funcionalidade do AGV. 
+            </p>
+            <h1 class="text-xl font-bold mb-4 text-gray-800">Encoders de Rodas (2 x HC-020K)</h1>
+            <p class="mb-4">
+                Os encoders de rodas monitorizam a rotação das rodas, permitindo calcular a velocidade do AGV em cm/s. Estes valores são exibidos no LCD, proporcionando feedback em tempo real ao utilizador sobre o desempenho do veículo. A medição da velocidade é importante para ajustes finos e para garantir a precisão do movimento. 
+            </p>
+            <h1 class="text-xl font-bold mb-4 text-gray-800">Display LCD (16x2)</h1>
+            <p class="mb-4">
+                O LCD 16x02 é utilizado para exibir informações cruciais como a velocidade do AGV e, indiretamente, o estado da pilha (se ainda fornece energia suficiente ou não) através da sua luminosidade. A comunicação com o LCD é realizada via protocolo I2C, economizando pinos de entrada/saída no ATmega328P e simplificando as conexões do circuito. 
+            </p>
+            <h1 class="text-xl font-bold mb-4 text-gray-800">LED Vermelho (1Hz)</h1>
+            <p class="mb-4">
+                O LED vermelho pisca com uma frequência de 1Hz, uma exigência que vem desde o sistema mínimo desenvolvido em trabalhos anteriores. Este LED serve como um indicador visual básico do funcionamento do sistema e ajuda na depuração e monitorização durante o desenvolvimento e operação. 
+            </p>
+            <h1 class="text-xl font-bold mb-4 text-gray-800">Fonte de Alimentação (1 x Pilha de 9V)</h1>
+            <p class="mb-4">
+                A pilha de 9V foi escolhida para fornecer energia suficiente para o driver de motor L298N, que por sua vez, regula e distribui 5V necessários ao ATmega328P e outros componentes. Este arranjo assegura que todos os dispositivos funcionem de forma estável e eficiente. 
+            </p>
+            <h1 class="text-xl font-bold mb-4 text-gray-800">Comunicação</h1>
+            <p class="mb-4">
+                Os sinais PWM (Modulação por Largura de Pulso) foram utilizados para controlar a velocidade dos motores TT e o brilho do LED vermelho, onde Timer 1 foi configurado para gerar um sinal PWM com frequência de 1 Hz, fazendo o LED vermelho piscar conforme os requisitos do sistema mínimo e sem a necessidade de interrupções.
+                Em relação a pinos GPIO (Entradas/Saídas de Propósito Geral), o ATmega328P possui 23 pinos GPIO distribuídos entre os Portos B, C e D, permitindo a interface com sensores, motores e o display LCD. Os pinos são programados como entradas ou saídas conforme necessário, facilitando a comunicação eficiente com os componentes do sistema.
+                <br><br>Todos os componentes descritos estão integrados de forma a proporcionar uma operação eficiente e autónoma do AGV. A combinação de sensores, motor, e microcontrolador assegura que o AGV siga a linha, evite obstáculos, e mantenha o utilizador informado sobre o seu desempenho. A escolha de reutilizar o ATmega328P e os componentes chave demonstra uma abordagem sustentável e eficiente no desenvolvimento deste projeto.
+            </p>
+        </section>
+    </main>
+</body>
+</html>
